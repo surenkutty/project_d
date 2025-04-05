@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+
+# Django stuff
+*.log
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# pip
+pip-log.txt
+
+# Coverage
+.coverage
+htmlcov/
+
+# Migrations (optional: keep if you want them in repo)
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+*/migrations/*.pyd
+
+# Node (if using npm/yarn for frontend)
+node_modules/
+build/
+dist/
+
+# dotenv (if storing secrets locally)
+.env
+.env.*
+
+# System files
+Thumbs.db
