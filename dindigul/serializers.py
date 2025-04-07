@@ -6,16 +6,18 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'slug', 'image']
 
-
 class PlaceSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Place
         fields = [
             'id', 'name', 'address', 'description', 'tags',
             'featured_image', 'bing_maps_url', 'latitude', 'longitude',
-            'website', 'phone', 'email','social_media',
+            'website', 'phone', 'email', 'social_media',
             'facebook', 'instagram', 'twitter',
-            'category', 'created_at'
+            'category', 'category_id', 'created_at'
         ]
