@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters
-from .models import Place, Category
-from .serializers import PlaceSerializer, CategorySerializer
+from .models import Place, Category,Offers
+from .serializers import PlaceSerializer, CategorySerializer,OfferSerializer
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import JsonResponse
@@ -26,6 +26,23 @@ class PlaceViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'address', 'description', 'tags', 'category__name']
     ordering_fields = ['name', 'created_at']
+
+
+class OfferViewSet(viewsets.ModelViewSet):
+    queryset = Offers.objects.all()
+    serializer_class = OfferSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'place__name', 'category__name']
+    ordering_fields = ['start_date', 'end_date']
+
+    @action(detail=True, methods=['get'])
+    def offers(self, request, pk=None):
+        place = self.get_object()
+        offers = place.offers.all()
+        serializer = OfferSerializer(offers, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+
 
 class BulkPlaceUploadView(APIView):
     def post(self, request, *args, **kwargs):

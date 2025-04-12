@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Category, Place
+from .models import Category, Place, Offers
+from django.utils import timezone
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +21,18 @@ class PlaceSerializer(serializers.ModelSerializer):
             'website', 'phone', 'email', 'social_media',
             'facebook', 'instagram', 'twitter',
             'category', 'category_id', 'created_at'
+        ]
+
+class OfferSerializer(serializers.ModelSerializer):
+    is_expired = serializers.SerializerMethodField()
+
+    def get_is_expired(self, obj):
+        return obj.end_date < timezone.now()
+
+    class Meta:
+        model = Offers
+        fields = [
+            'id', 'name', 'slug', 'category', 'category_id',
+            'place', 'place_id', 'image', 'start_date',
+            'end_date', 'is_active', 'created_at', 'is_expired'
         ]

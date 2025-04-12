@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Place
+from .models import Category, Place,Offers
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -26,5 +26,13 @@ class PlaceAdmin(admin.ModelAdmin):
         return obj.address[:50] + '...' if len(obj.address) > 50 else obj.address
     address_short.short_description = 'Address'
 
+
+@admin.register(Offers)
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'place', 'start_date', 'end_date', 'is_active')
+    list_filter = ('category', 'place', 'is_active')
+    search_fields = ('name', 'place__name', 'category__name')
+    readonly_fields = ('created_at',)
+    prepopulated_fields = {'slug': ('name',)}
 
 # Register your models here.
