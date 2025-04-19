@@ -23,6 +23,7 @@ class PlaceSerializer(serializers.ModelSerializer):
             'category', 'category_id', 'created_at'
         ]
 
+
 class OfferSerializer(serializers.ModelSerializer):
     is_expired = serializers.SerializerMethodField()
 

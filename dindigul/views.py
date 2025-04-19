@@ -7,6 +7,7 @@ from .serializers import PlaceSerializer, CategorySerializer,OfferSerializer
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import JsonResponse
+from django.utils import timezone
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -29,19 +30,31 @@ class PlaceViewSet(viewsets.ModelViewSet):
 
 
 class OfferViewSet(viewsets.ModelViewSet):
-    queryset = Offers.objects.all()
     serializer_class = OfferSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'place__name', 'category__name']
     ordering_fields = ['start_date', 'end_date']
 
+    def get_queryset(self):
+        now = timezone.now()
+        return Offers.objects.filter(is_active=True, end_date__gte=now)
+
     @action(detail=True, methods=['get'])
     def offers(self, request, pk=None):
         place = self.get_object()
-        offers = place.offers.all()
+        offers = place.offers.filter(is_active=True, end_date__gte=timezone.now())
         serializer = OfferSerializer(offers, many=True, context={'request': request})
         return Response(serializer.data)
-    
+
+
+class ExpiredOfferViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = OfferSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'place__name', 'category__name']
+    ordering_fields = ['start_date', 'end_date']
+
+    def get_queryset(self):
+        return Offers.objects.filter(is_active=False, end_date__lt=timezone.now())
 
 
 class BulkPlaceUploadView(APIView):

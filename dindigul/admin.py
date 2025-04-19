@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Category, Place,Offers
+from django.utils import timezone
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -34,5 +35,10 @@ class OfferAdmin(admin.ModelAdmin):
     search_fields = ('name', 'place__name', 'category__name')
     readonly_fields = ('created_at',)
     prepopulated_fields = {'slug': ('name',)}
+    actions = ['deactivate_expired_offers']
 
-# Register your models here.
+    def deactivate_expired_offers(self, request, queryset):
+        expired = queryset.filter(end_date__lt=timezone.now(), is_active=True)
+        count = expired.update(is_active=False)
+        self.message_user(request, f"{count} expired offers have been deactivated.")
+
