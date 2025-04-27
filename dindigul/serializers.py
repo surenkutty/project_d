@@ -7,21 +7,6 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'slug', 'image']
 
-class PlaceSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), write_only=True
-    )
-
-    class Meta:
-        model = Place
-        fields = [
-            'id', 'name', 'address', 'description', 'tags',
-            'featured_image', 'bing_maps_url', 'latitude', 'longitude',
-            'website', 'phone', 'email', 'social_media',
-            'facebook', 'instagram', 'twitter',
-            'category', 'category_id', 'created_at'
-        ]
 
 
 class OfferSerializer(serializers.ModelSerializer):
@@ -36,4 +21,21 @@ class OfferSerializer(serializers.ModelSerializer):
             'id', 'name', 'slug', 'category', 'category_id',
             'place', 'place_id', 'image', 'start_date',
             'end_date', 'is_active', 'created_at', 'is_expired'
+        ]
+
+class PlaceSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), write_only=True
+    )
+    offers=OfferSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Place
+        fields = [
+            'id', 'name', 'address', 'description', 'tags',
+            'featured_image', 'bing_maps_url', 'latitude', 'longitude',
+            'website', 'phone', 'email', 'social_media',
+            'facebook', 'instagram', 'twitter',
+            'category', 'category_id', 'offers','created_at'
         ]
